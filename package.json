@@ -1,0 +1,22 @@
+{
+  "name": "samples_nodejs",
+  "version": "1.0.0",
+  "description": "Nodejs samples.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://jorgegvalencia@github.com/jorgegvalencia/samples_nodejs.git"
+  },
+  "author": "jorgegvalencia",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jorgegvalencia/samples_nodejs/issues"
+  },
+  "homepage": "https://github.com/jorgegvalencia/samples_nodejs#readme",
+  "dependencies": {
+    "chance": "^1.0.1"
+  }
+}
