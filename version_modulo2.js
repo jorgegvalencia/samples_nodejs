@@ -4,9 +4,12 @@ var fs = require('fs');
 
 function versionModulo(modulo, callback) {
     fs.readFile(modulo + '/package.json', 'utf8', function(err, data) {
-        if (err) {
+        // cuando haya leido el fichero
+        if (err) { // si hay error
+            // pasale un error a la funcion de callback
             return callback(err);
         } else {
+            // pasale la version a la funcion de callback
             var pack = JSON.parse(data);
             var version = pack.version;
             callback(err, version);
@@ -14,16 +17,44 @@ function versionModulo(modulo, callback) {
     });
 }
 
+var async = require('async');
+
 function readModulesVersion(directory, callback) {
-    var files = fs.readdirSync(directory); // returns an array with the files names
-    for (var i = 0; i < files.length; i++) {
-        var module = directory+'/'+files[i];
-        var stats = fs.statSync(module);
-        if (stats.isDirectory()) {
-            versionModulo(module, callback);
+    fs.readdir(directory, function(err, files) { // lee los ficheros del directorio
+        readAllModulesSync(directory, files, callback); // cuando acabe, pasa los nombres de los ficheros a readAllModules
+    });
+}
+
+function readAllModules(directory, files, callback) {
+    async.eachSeries(files, // para cada fichero
+        function(item, next) {
+            var dir = directory + item;
+            readModule(dir, callback);
+            next();
+        },
+        function end(err) {
+            // console.log('No existe el fichero package.json');
         }
+    );
+}
+
+function readAllModulesSync(directory, files, callback) {
+    for(var i in files){
+        var dir = directory + files[i];
+        readModule(dir, callback);
     }
 }
+
+function readModule(dirModulo, callback) {
+    var stats = fs.statSync(dirModulo); // comprueba el fichero
+    if (stats.isDirectory()) { // si es un directorio
+        // busca la version y usa este callback cuando acabes
+        versionModulo(dirModulo, callback);
+    } else {
+        callback(err);
+    }
+}
+
 
 readModulesVersion('./node_modules/', function(err, str) {
     if (err) {
