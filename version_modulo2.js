@@ -1,8 +1,9 @@
 'use strict';
 
 var fs = require('fs');
+var async = require('async');
 
-function versionModulo(modulo, callback) {
+function readVersion(modulo, callback) {
     fs.readFile(modulo + '/package.json', 'utf8', function(err, data) {
         // cuando haya leido el fichero
         if (err) { // si hay error
@@ -12,18 +13,22 @@ function versionModulo(modulo, callback) {
             // pasale la version a la funcion de callback
             var pack = JSON.parse(data);
             var version = pack.version;
-            callback(err, version);
+            callback(err, modulo, version);
         }
     });
 }
 
-var async = require('async');
-
-function readModulesVersion(directory, callback) {
-    fs.readdir(directory, function(err, files) { // lee los ficheros del directorio
-        readAllModulesSync(directory, files, callback); // cuando acabe, pasa los nombres de los ficheros a readAllModules
+function readModule(modulo, callback) {
+    fs.stat(modulo, function(err, stats) {
+        if (stats.isDirectory()) { // si es un directorio
+            // busca la version y usa este callback cuando acabes
+            readVersion(modulo, callback);
+        } else {
+            callback(err);
+        }
     });
 }
+
 
 function readAllModules(directory, files, callback) {
     async.eachSeries(files, // para cada fichero
@@ -38,28 +43,20 @@ function readAllModules(directory, files, callback) {
     );
 }
 
-function readAllModulesSync(directory, files, callback) {
-    for(var i in files){
-        var dir = directory + files[i];
-        readModule(dir, callback);
-    }
+function readModulesVersion(directory, callback) {
+    fs.readdir(directory, function(err, files) { // lee los ficheros del directorio
+        if (err) {
+            callback(err);
+        } else {
+            readAllModules(directory, files, callback); // cuando acabe, pasa los nombres de los ficheros a readAllModules
+        }
+    });
 }
 
-function readModule(dirModulo, callback) {
-    var stats = fs.statSync(dirModulo); // comprueba el fichero
-    if (stats.isDirectory()) { // si es un directorio
-        // busca la version y usa este callback cuando acabes
-        versionModulo(dirModulo, callback);
-    } else {
-        callback(err);
-    }
-}
-
-
-readModulesVersion('./node_modules/', function(err, str) {
+readModulesVersion('./node_modules/', function(err, modulo, str) {
     if (err) {
         console.error('Hubo un error: ', err);
         return;
     }
-    console.log('La versión del módulo es:', str);
+    console.log('La versión del módulo ' + modulo.replace(/.*node_modules\//, "") + ' es:', str);
 });
