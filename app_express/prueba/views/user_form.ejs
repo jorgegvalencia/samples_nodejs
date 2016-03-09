@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<% users.forEach(function(user){ %>
+<label for="">Nombre</label><input type="text" value="<%= user.name %>">
+<label for="">Edad</label><input type="text" value="<%= user.age %>"></input>
+<br>	
+<% }) %>
+</body>
+</html>
