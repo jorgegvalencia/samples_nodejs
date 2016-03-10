@@ -1,23 +1,19 @@
 'use strict';
 
-// datos
-var users = [
-{
-	name: 'Will',
-	age: 30
-},
-{
-	name: 'Smith',
-	age: 54
-}
-]
+var mongomanager = require('../lib/mongooseManager');
 
 // metodos del modelo
 var usersList = {
 	getUsers: function (cb) {
 		// leer datos
-		var usuariosLeidos;
-		cb(null, usuariosLeidos);
+		mongomanager.db.collection('usuarios').find({}).toArray(function (err, usuariosLeidos) {
+			if(err){
+				return cb(err);
+			}
+			cb(null, usuariosLeidos);
+			console.dir(usuariosLeidos);
+			// return
+		});
 	} 
 }
 
