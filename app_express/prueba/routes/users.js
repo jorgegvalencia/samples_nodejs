@@ -1,8 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var users = require('../models/users_model');
-
-console.log('users', users);
+var mongoose = require('mongoose');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -11,9 +9,15 @@ router.get('/', function(req, res, next) {
 
 /* GET users listing. */
 router.get('/form', function(req, res, next) {
-	users.getUsers(function (err, users) {
-  		res.render('user_form', {users: users});
-	})
+	var User = mongoose.model('usuarios');
+	User.list(function (err, rows) {
+		if(err){
+			console.log(err);
+			return;
+		}
+		res.render('user_form', {users: rows})
+		// return;
+	});
 });
 
 module.exports = router;
