@@ -15,6 +15,15 @@ var http = require('http');
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
+var cluster = require('cluster');
+
+if(cluster.isMaster){
+  var numCPUs = require('os').cpus().length; 
+  for(var i = 0; i < numCPUs; i++){
+    cluster.fork();
+  }
+}
+else {
 /**
  * Create HTTP server.
  */
@@ -89,3 +98,6 @@ function onListening() {
   //debug('Listening on ' + bind);
   console.log('Listening on ' + bind);
 }
+  
+}
+
