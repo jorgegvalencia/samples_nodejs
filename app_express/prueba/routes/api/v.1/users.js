@@ -3,8 +3,12 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
+// var basicauth = require('basic-auth');
+var auth = require('../../../lib/auth');
 
 var User = mongoose.model('usuarios');
+
+router.use(auth('admin', 'pass2'));
 
 /* GET users listing. */
 router.get('/', function(req, res) {
