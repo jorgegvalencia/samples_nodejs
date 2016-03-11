@@ -8,10 +8,10 @@ var auth = require('../../../lib/auth');
 
 var User = mongoose.model('usuarios');
 
-router.use(auth('admin', 'pass2'));
+// router.use(auth('admin', 'pass2'));
 
 /* GET users listing. */
-router.get('/', function(req, res) {
+router.get('/', auth('admin', 'pass'), function(req, res) {
 
     User.list(function(err, rows) {
         if (err) {
